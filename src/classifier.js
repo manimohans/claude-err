@@ -20,7 +20,7 @@ const PATTERNS = [
   // Value / argument
   { category: "value",      regex: /ValueError|InvalidArgumentException|IllegalArgumentException|ArgumentError|bad argument|invalid argument|FormatException|NumberFormatException|DomainError/i },
   // Assertion / test
-  { category: "assertion",  regex: /AssertionError|AssertionError|Assertion.*failed|ASSERT|static assertion|test.*fail|expected.*but got/i },
+  { category: "assertion",  regex: /AssertionError|AssertError|Assertion.*failed|ASSERT|static assertion|test.*fail|expected.*but got/i },
   // Runtime
   { category: "runtime",    regex: /RuntimeError|RuntimeException|InternalError|IllegalStateException|InvalidOperationException|FunctionClauseError|MatchError|CaseClauseError|RecursionError|maximum recursion/i },
   // Borrow checker / Rust (before network so "E0502" doesn't match "502")

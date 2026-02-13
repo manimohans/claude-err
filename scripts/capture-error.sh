@@ -36,8 +36,8 @@ mkdir -p "$(dirname "$DB_PATH")"
 # Extract project name from cwd
 PROJECT_NAME=$(basename "$PROJECT_DIR")
 
-# Truncate response to first 2000 chars to keep DB manageable
-ERROR_TEXT=$(echo "$TOOL_RESPONSE" | head -c 2000)
+# Truncate response to first 2000 characters (bash substring is UTF-8 safe)
+ERROR_TEXT="${TOOL_RESPONSE:0:2000}"
 
 # Write to SQLite via the Node.js helper (JSON over stdin avoids shell injection)
 jq -nc \

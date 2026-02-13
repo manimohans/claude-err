@@ -1,5 +1,7 @@
 # claude-err
 
+> **Beta** — This plugin is under active testing. It works, but expect rough edges and breaking changes.
+
 A [Claude Code](https://code.claude.com) plugin that builds a local database of errors and their solutions across all your projects. When you hit an error Claude has fixed before — in any project — it recalls the fix automatically.
 
 ## Install
@@ -48,7 +50,7 @@ Covers Python, JavaScript/TypeScript, Rust, Go, Java, C/C++, Ruby, PHP, Elixir, 
 
 ```
 PostToolUseFailure → capture-error.sh → classifier.js → ingest.js → sqlite
-Stop               → capture-solution.sh → check-pending.js → extract-solution.js → ingest.js → sqlite
+Stop               → capture-solution.sh → extract-solution.js → sqlite
 SessionStart       → inject-context.sh → reads stats from sqlite → injects into context
 ```
 
@@ -57,9 +59,8 @@ Key files:
 - `scripts/` — Bash entry points for each hook
 - `src/db.js` — Schema and SQLite setup (WAL mode, FTS indexing)
 - `src/classifier.js` — 26-category regex classifier
-- `src/ingest.js` — Writes errors/solutions to DB
-- `src/extract-solution.js` — Parses Claude Code JSONL transcripts for fix actions
-- `src/check-pending.js` — Finds unresolved errors for a session
+- `src/ingest.js` — Writes errors to DB
+- `src/extract-solution.js` — Parses transcript, extracts fix actions, writes solutions to DB
 - `skills/error-lookup/SKILL.md` — Proactive error search skill
 
 ## Data

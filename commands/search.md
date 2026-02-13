@@ -5,10 +5,12 @@ disable-model-invocation: true
 
 # /search
 
-Run this Bash command, replacing QUERY with `$ARGUMENTS`:
+Run this Bash command, replacing QUERY with `$ARGUMENTS` (escape any single quotes by doubling them: `'` → `''`):
 ```
 sqlite3 -json ~/.claude-err/claude-err.db "SELECT e.command, substr(e.error_output,1,200) as error_output, e.error_category, e.project_name, e.created_at, s.solution_text FROM errors e LEFT JOIN solutions s ON s.error_id = e.id WHERE e.error_output LIKE '%QUERY%' OR e.command LIKE '%QUERY%' ORDER BY e.created_at DESC LIMIT 5;"
 ```
+
+**IMPORTANT**: Before inserting `$ARGUMENTS` into the SQL, replace every `'` with `''` to prevent query breakage. For example, if the user searches for `can't find`, use `can''t find` in the LIKE clause.
 
 If `~/.claude-err/claude-err.db` does not exist, tell the user no errors have been captured yet.
 
