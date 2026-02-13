@@ -1,4 +1,5 @@
 ---
+name: error-lookup
 description: >
   PROACTIVELY activate when Claude encounters errors, exceptions,
   stack traces, build failures, or unexpected behavior during bash

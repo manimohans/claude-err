@@ -1,0 +1,21 @@
+{
+  "name": "claude-err-marketplace",
+  "owner": {
+    "name": "Mani",
+    "url": "https://github.com/manimohans"
+  },
+  "plugins": [
+    {
+      "name": "claude-err",
+      "source": "./",
+      "description": "Cross-project error intelligence. Captures error-solution pairs across all projects and surfaces relevant past solutions automatically.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Mani"
+      },
+      "category": "productivity",
+      "tags": ["error-tracking", "cross-project", "memory", "debugging"],
+      "license": "MIT"
+    }
+  ]
+}

@@ -4,5 +4,8 @@
   "description": "Cross-project error intelligence. Captures error-solution pairs across all projects and surfaces relevant past solutions automatically.",
   "author": {
     "name": "Mani"
-  }
+  },
+  "repository": "https://github.com/manimohans/claude-err",
+  "license": "MIT",
+  "keywords": ["error-tracking", "cross-project", "memory", "debugging"]
 }
