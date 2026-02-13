@@ -46,16 +46,27 @@ try {
 // Extract tool uses that look like fixes (edits, writes, successful commands)
 const fixActions = [];
 const fixTools = new Set(["Edit", "Write", "Bash", "edit_file", "create_file"]);
-const errorTime = new Date(error.created_at).getTime();
+// SQLite CURRENT_TIMESTAMP stores UTC without a Z suffix — append Z so
+// JavaScript parses it as UTC (matching the transcript's ISO-8601 timestamps).
+const errorTime = new Date(error.created_at + "Z").getTime();
 
 for (const line of lines) {
   try {
     const entry = JSON.parse(line);
-    if (entry.tool && fixTools.has(entry.tool) && new Date(entry.timestamp).getTime() > errorTime) {
-      fixActions.push({
-        tool: entry.tool,
-        input: typeof entry.input === "string" ? entry.input.slice(0, 500) : JSON.stringify(entry.input).slice(0, 500),
-      });
+    if (entry.type !== "assistant" || !entry.message?.content) continue;
+    if (new Date(entry.timestamp).getTime() <= errorTime) continue;
+
+    const toolUses = Array.isArray(entry.message.content)
+      ? entry.message.content.filter((c) => c.type === "tool_use")
+      : [];
+
+    for (const tu of toolUses) {
+      if (fixTools.has(tu.name)) {
+        fixActions.push({
+          tool: tu.name,
+          input: typeof tu.input === "string" ? tu.input.slice(0, 500) : JSON.stringify(tu.input).slice(0, 500),
+        });
+      }
     }
   } catch {
     // Skip malformed lines
