@@ -14,12 +14,13 @@ It's a plugin for [Claude Code](https://code.claude.com) that quietly watches fo
 
 Open Claude Code and run:
 ```
-/plugin install https://github.com/manimohans/claude-err
+/plugin marketplace add manimohans/claude-err
+/plugin install claude-err@manimohans-claude-err
 ```
 
 That's it. No config needed. Dependencies install automatically on first run. It starts working immediately.
 
-> **Local development?** Clone the repo and point Claude Code at it:
+> **Local development?** Clone the repo and load it directly:
 > ```bash
 > git clone https://github.com/manimohans/claude-err.git
 > claude --plugin-dir /path/to/claude-err
