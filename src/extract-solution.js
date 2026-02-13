@@ -2,17 +2,16 @@
 
 import { readFileSync } from "fs";
 import path from "path";
+import { parseArgs } from "node:util";
 
-function parseArgs(argv) {
-  const args = {};
-  for (let i = 2; i < argv.length; i += 2) {
-    const key = argv[i].replace(/^--/, "");
-    args[key] = argv[i + 1] || "";
-  }
-  return args;
-}
-
-const args = parseArgs(process.argv);
+const { values: args } = parseArgs({
+  options: {
+    session:    { type: "string", default: "" },
+    transcript: { type: "string", default: "" },
+    "error-id": { type: "string", default: "" },
+  },
+  strict: false,
+});
 
 const DB_PATH =
   process.env.DB_PATH ||
@@ -47,11 +46,12 @@ try {
 // Extract tool uses that look like fixes (edits, writes, successful commands)
 const fixActions = [];
 const fixTools = new Set(["Edit", "Write", "Bash", "edit_file", "create_file"]);
+const errorTime = new Date(error.created_at).getTime();
 
 for (const line of lines) {
   try {
     const entry = JSON.parse(line);
-    if (entry.tool && fixTools.has(entry.tool) && entry.timestamp > error.created_at) {
+    if (entry.tool && fixTools.has(entry.tool) && new Date(entry.timestamp).getTime() > errorTime) {
       fixActions.push({
         tool: entry.tool,
         input: typeof entry.input === "string" ? entry.input.slice(0, 500) : JSON.stringify(entry.input).slice(0, 500),

@@ -45,6 +45,22 @@ export function getDb() {
       content_rowid=rowid
     );
 
+    -- Keep FTS index in sync automatically via triggers
+    CREATE TRIGGER IF NOT EXISTS errors_fts_ai AFTER INSERT ON errors BEGIN
+      INSERT INTO errors_fts(rowid, error_output, command)
+      VALUES (new.rowid, new.error_output, new.command);
+    END;
+    CREATE TRIGGER IF NOT EXISTS errors_fts_ad AFTER DELETE ON errors BEGIN
+      INSERT INTO errors_fts(errors_fts, rowid, error_output, command)
+      VALUES ('delete', old.rowid, old.error_output, old.command);
+    END;
+    CREATE TRIGGER IF NOT EXISTS errors_fts_au AFTER UPDATE ON errors BEGIN
+      INSERT INTO errors_fts(errors_fts, rowid, error_output, command)
+      VALUES ('delete', old.rowid, old.error_output, old.command);
+      INSERT INTO errors_fts(rowid, error_output, command)
+      VALUES (new.rowid, new.error_output, new.command);
+    END;
+
     CREATE INDEX IF NOT EXISTS idx_errors_project ON errors(project_name);
     CREATE INDEX IF NOT EXISTS idx_errors_category ON errors(error_category);
     CREATE INDEX IF NOT EXISTS idx_errors_session ON errors(session_id);

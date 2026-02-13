@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT="${CLAUDE_PLUGIN_ROOT:?CLAUDE_PLUGIN_ROOT not set}"
+# Derive plugin root from script location if not set
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+ROOT="${CLAUDE_PLUGIN_ROOT:-$(dirname "$SCRIPT_DIR")}"
 
 if [ -d "$ROOT/node_modules" ]; then
   exit 0

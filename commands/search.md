@@ -5,7 +5,12 @@ disable-model-invocation: true
 
 # /search
 
-Call the `search_errors` tool from the `claude-err` MCP server with the query set to "$ARGUMENTS".
+Run this Bash command, replacing QUERY with `$ARGUMENTS`:
+```
+sqlite3 -json ~/.claude-err/claude-err.db "SELECT e.command, substr(e.error_output,1,200) as error_output, e.error_category, e.project_name, e.created_at, s.solution_text FROM errors e LEFT JOIN solutions s ON s.error_id = e.id WHERE e.error_output LIKE '%QUERY%' OR e.command LIKE '%QUERY%' ORDER BY e.created_at DESC LIMIT 5;"
+```
+
+If `~/.claude-err/claude-err.db` does not exist, tell the user no errors have been captured yet.
 
 Display each result as a readable summary:
 - Error message (truncated to 2 lines)
@@ -13,4 +18,4 @@ Display each result as a readable summary:
 - When it was captured
 - The solution if one exists
 
-If no results are found, say so. If the tool is not available, tell the user the claude-err MCP server may not be running and suggest restarting Claude Code.
+If no results are found, say so.

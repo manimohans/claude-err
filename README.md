@@ -2,7 +2,7 @@
 
 **Ever hit the same error twice across different projects?** claude-err remembers so you don't have to.
 
-It's a plugin for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) that quietly watches for errors in the background. When something breaks, it saves the error. When Claude fixes it, it saves the fix. Next time a similar error shows up — in *any* project — Claude already knows what to do.
+It's a plugin for [Claude Code](https://code.claude.com) that quietly watches for errors in the background. When something breaks, it saves the error. When Claude fixes it, it saves the fix. Next time a similar error shows up — in *any* project — Claude already knows what to do.
 
 ## Why?
 
@@ -12,30 +12,26 @@ It's a plugin for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 
 
 ## Install
 
-**Option 1: From GitHub**
-
 Open Claude Code and run:
 ```
 /plugin install https://github.com/manimohans/claude-err
 ```
 
-**Option 2: For local development**
-```bash
-git clone https://github.com/manimohans/claude-err.git
-cd claude-err
-npm install
-claude --plugin-dir ./claude-err
-```
+That's it. No config needed. Dependencies install automatically on first run. It starts working immediately.
 
-That's it. No config needed. It starts working immediately.
+> **Local development?** Clone the repo and point Claude Code at it:
+> ```bash
+> git clone https://github.com/manimohans/claude-err.git
+> claude --plugin-dir /path/to/claude-err
+> ```
 
 ## How it works
 
-Once installed, claude-err runs silently in the background:
+Once installed, claude-err hooks into Claude Code and runs silently in the background:
 
-1. **You hit an error** — Claude runs a command and it fails. claude-err saves the error, the command that caused it, and which project you were in.
-2. **Claude fixes it** — When Claude resolves the error, claude-err saves what Claude did to fix it (files changed, commands run).
-3. **Same error, different project** — Next time a similar error appears anywhere, Claude automatically searches its memory and finds the past solution before trying anything new.
+1. **Error captured** — Claude runs a command and it fails. claude-err saves the error output, the command that caused it, classifies the error type, and tags it with the project name.
+2. **Solution captured** — When Claude's session ends after resolving an error, claude-err records what Claude did to fix it (files changed, commands run) and links it to the original error.
+3. **Automatic recall** — Next time a similar error appears in *any* project, Claude automatically searches its error database and surfaces the past solution before trying anything new.
 
 You don't need to do anything. It just works.
 
@@ -43,33 +39,36 @@ You don't need to do anything. It just works.
 
 If you want to interact with it manually:
 
-- **`/claude-err:status`** — See how many errors have been captured, how many have solutions, and across how many projects.
-- **`/claude-err:search <query>`** — Search for a specific error. Example: `/claude-err:search CORS` or `/claude-err:search ModuleNotFoundError`.
+| Command | What it does |
+|---------|-------------|
+| `/claude-err:status` | Show how many errors and solutions have been captured, across how many projects, plus the 5 most recent errors |
+| `/claude-err:search <query>` | Search past errors and solutions. Example: `/claude-err:search CORS` or `/claude-err:search ModuleNotFoundError` |
 
 ## What it catches
 
-claude-err detects errors from all major languages, runtimes, and tools — including but not limited to:
+claude-err detects errors from all major languages, runtimes, and tools. Each error is classified into one of 26 categories for better matching:
 
-- **Python** — `ImportError`, `TypeError`, `ValueError`, `KeyError`, and all built-in exceptions
-- **JavaScript / TypeScript** — `ReferenceError`, `TypeError`, `SyntaxError`, TS error codes, Node.js `ERR_` codes
-- **Rust** — Borrow checker errors, type mismatches, `cargo` build failures
-- **Go** — `nil pointer dereference`, `index out of range`, `concurrent map` writes
-- **Java / Kotlin** — `NullPointerException`, `ClassNotFoundException`, `IllegalArgumentException`
-- **C / C++** — Segfaults, linker errors, `gcc`/`clang` compiler errors, `make` failures
-- **Ruby** — `LoadError`, `NoMethodError`, `ArgumentError`
-- **PHP** — `PDOException`, `SQLSTATE`, Laravel/Symfony errors
-- **Elixir** — `FunctionClauseError`, `MatchError`, `UndefinedFunctionError`
-- **Swift** — `swiftc` errors, Xcode build failures, CocoaPods issues
-- **System** — Permission denied, file not found, out of memory, network timeouts, CORS, SSL/TLS
-- **Databases** — SQL constraint violations, MongoDB errors, missing tables/columns
-- **Build tools** — `npm`, `pip`, `cargo`, `maven`, `gradle`, `cmake`, `docker`, `kubectl`, `terraform`
-- **HTTP** — `4xx`/`5xx` status codes
+| Category | Examples |
+|----------|----------|
+| **import** | `ModuleNotFoundError`, `Cannot find module`, `ClassNotFoundException` |
+| **syntax** | `SyntaxError`, `unexpected token`, `parse error` |
+| **type** | `TypeError`, `type mismatch`, `is not a function` |
+| **null** | `NullPointerException`, `nil pointer dereference`, `Cannot read properties of undefined` |
+| **borrow** | Rust borrow checker, `cannot borrow`, `move occurs` |
+| **network** | `ECONNREFUSED`, `CORS`, `timeout`, `502`/`503`/`504` |
+| **permission** | `EACCES`, `permission denied`, `401`/`403` |
+| **not_found** | `ENOENT`, `FileNotFoundError`, `404` |
+| **database** | `SQLSTATE`, `PDOException`, `duplicate key`, `constraint violation` |
+| **build** | `linker error`, `collect2`, `gcc`/`clang` errors, `cargo error` |
+| **memory** | `OOM`, `segfault`, `SIGSEGV`, `stack overflow` |
+| **dependency** | `npm ERR`, `version conflict`, `peer dep`, `EINTEGRITY` |
+| **+ 14 more** | bounds, name, key, attribute, value, assertion, runtime, io, config, concurrency, http, infra, security, unknown |
 
-Errors that don't match a known category are still captured and searchable.
+Errors that don't match a known pattern are still captured and searchable under the `unknown` category.
 
 ## Where data is stored
 
-Everything lives in a single SQLite database at:
+Everything lives in a single SQLite database:
 ```
 ~/.claude-err/claude-err.db
 ```
@@ -78,6 +77,11 @@ Nothing is sent anywhere. Delete that file to start fresh.
 
 ## Requirements
 
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
+- [Claude Code](https://code.claude.com) with plugin support (run `/plugin` to check)
 - Node.js 18+
-- `jq` (usually pre-installed on macOS/Linux — run `jq --version` to check)
+- `jq` (pre-installed on macOS; on Linux: `sudo apt install jq`)
+- `sqlite3` (pre-installed on macOS and most Linux distros)
+
+## License
+
+MIT

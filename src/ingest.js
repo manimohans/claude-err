@@ -9,16 +9,24 @@ const DB_PATH =
   process.env.DB_PATH ||
   path.join(process.env.HOME, ".claude-err", "claude-err.db");
 
-function parseArgs(argv) {
-  const args = {};
-  for (let i = 2; i < argv.length; i += 2) {
-    const key = argv[i].replace(/^--/, "");
-    args[key] = argv[i + 1] || "";
-  }
-  return args;
+// Read JSON payload from stdin (avoids shell injection from CLI args)
+function readStdin() {
+  return new Promise((resolve, reject) => {
+    let data = "";
+    process.stdin.setEncoding("utf-8");
+    process.stdin.on("data", (chunk) => (data += chunk));
+    process.stdin.on("end", () => {
+      try {
+        resolve(JSON.parse(data));
+      } catch (err) {
+        reject(new Error(`Invalid JSON on stdin: ${err.message}`));
+      }
+    });
+    process.stdin.on("error", reject);
+  });
 }
 
-const args = parseArgs(process.argv);
+const args = await readStdin();
 
 // Ensure DB directory exists
 mkdirSync(path.dirname(DB_PATH), { recursive: true });
@@ -41,15 +49,11 @@ if (args.type === "error") {
     args.output || "",
     category,
     args.project || "unknown",
-    args["project-dir"] || "",
+    args.projectDir || "",
     args.session || ""
   );
 
-  // Update FTS index
-  db.prepare(
-    `INSERT INTO errors_fts (rowid, error_output, command)
-     SELECT rowid, error_output, command FROM errors WHERE id = ?`
-  ).run(id);
+  // FTS is updated automatically via triggers in db.js
 
   // Write the error ID to stdout so capture-solution can reference it
   process.stdout.write(id);
@@ -61,14 +65,14 @@ if (args.type === "error") {
      VALUES (?, ?, ?, ?, ?)`
   ).run(
     id,
-    args["error-id"] || "",
+    args.errorId || "",
     args.solution || "",
-    args["files-changed"] || "[]",
-    args["commands-run"] || "[]"
+    args.filesChanged || "[]",
+    args.commandsRun || "[]"
   );
 
   // Mark the error as resolved
   db.prepare(`UPDATE errors SET resolved = 1 WHERE id = ?`).run(
-    args["error-id"] || ""
+    args.errorId || ""
   );
 }
