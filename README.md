@@ -20,8 +20,8 @@ claude --plugin-dir ./claude-err
 
 ## Commands
 
-- `/claude-err:oracle-status` — Show database stats and recent captures
-- `/claude-err:oracle-search <query>` — Search past errors manually
+- `/claude-err:status` — Show database stats and recent captures
+- `/claude-err:search <query>` — Search past errors manually
 
 ## Data
 

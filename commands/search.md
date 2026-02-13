@@ -2,7 +2,7 @@
 description: Manually search the claude-err database for past errors and solutions
 ---
 
-# /oracle-search
+# /search
 
 Use the `search_errors` MCP tool with the user's query ($ARGUMENTS).
 Display results showing: error message, project it came from,

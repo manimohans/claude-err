@@ -56,7 +56,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
       },
     },
     {
-      name: "oracle_stats",
+      name: "claude_err_stats",
       description: "Get claude-err database statistics",
       inputSchema: { type: "object", properties: {} },
     },
@@ -84,7 +84,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         content: [{ type: "text", text: JSON.stringify(solution, null, 2) }],
       };
     }
-    case "oracle_stats": {
+    case "claude_err_stats": {
       const stats = await getStats();
       return {
         content: [{ type: "text", text: JSON.stringify(stats, null, 2) }],
