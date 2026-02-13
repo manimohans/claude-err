@@ -17,13 +17,15 @@ const { values: args } = parseArgs({
 const { getDb } = await import("./db.js");
 const db = getDb();
 
-// Find the most recent unresolved error for this session
+// Find all unresolved errors for this session
 const pending = db
   .prepare(
     `SELECT id FROM errors
      WHERE session_id = ? AND resolved = 0
-     ORDER BY created_at DESC LIMIT 1`
+     ORDER BY created_at ASC`
   )
-  .get(args.session || "");
+  .all(args.session || "");
 
-process.stdout.write(pending ? pending.id : "none");
+process.stdout.write(
+  pending.length > 0 ? pending.map((r) => r.id).join("\n") : "none"
+);
