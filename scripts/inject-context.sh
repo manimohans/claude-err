@@ -4,10 +4,14 @@ set -euo pipefail
 # Read stdin (hook payload) — required even if unused
 cat > /dev/null
 
+# Auto-install dependencies if missing (happens after plugin cache copy)
+if [ ! -d "${CLAUDE_PLUGIN_ROOT}/node_modules" ]; then
+  npm install --prefix "${CLAUDE_PLUGIN_ROOT}" --production --no-audit --no-fund 2>/dev/null
+fi
+
 DB_PATH="${HOME}/.claude-err/claude-err.db"
 
 if [ ! -f "$DB_PATH" ]; then
-  # First run — output via hookSpecificOutput.additionalContext
   cat <<'EOF'
 {
   "hookSpecificOutput": {
