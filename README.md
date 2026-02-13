@@ -78,6 +78,6 @@ Nothing is sent anywhere. Delete that file to start fresh.
 
 ## Requirements
 
-- [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 1.0.33 or later
+- [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
 - Node.js 18+
 - `jq` (usually pre-installed on macOS/Linux — run `jq --version` to check)

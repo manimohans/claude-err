@@ -23,24 +23,24 @@ const PATTERNS = [
   { category: "assertion",  regex: /AssertionError|AssertionError|Assertion.*failed|ASSERT|static assertion|test.*fail|expected.*but got/i },
   // Runtime
   { category: "runtime",    regex: /RuntimeError|RuntimeException|InternalError|IllegalStateException|InvalidOperationException|FunctionClauseError|MatchError|CaseClauseError|RecursionError|maximum recursion/i },
-  // Network / connection
-  { category: "network",    regex: /ECONNREFUSED|ECONNRESET|ETIMEDOUT|EHOSTUNREACH|ENETUNREACH|CORS|fetch failed|timeout|ConnectionError|ConnectionRefused|502|503|504|BadGateway|ServiceUnavailable|GatewayTimeout|EADDRINUSE|socket hang up/i },
-  // Permission / auth
-  { category: "permission", regex: /EACCES|EPERM|permission denied|forbidden|401|403|AccessViolationException|Unauthorized|access denied/i },
-  // File not found
-  { category: "not_found",  regex: /ENOENT|FileNotFoundError|no such file|404|not found|does not exist|FileNotFoundException/i },
+  // Borrow checker / Rust (before network so "E0502" doesn't match "502")
+  { category: "borrow",     regex: /borrow checker|lifetime|cannot borrow|move occurs|does not implement.*trait|borrowing|borrowed/i },
+  // Network / connection (word-boundary on status codes to avoid matching error codes like E0502)
+  { category: "network",    regex: /ECONNREFUSED|ECONNRESET|ETIMEDOUT|EHOSTUNREACH|ENETUNREACH|CORS|fetch failed|timeout|ConnectionError|ConnectionRefused|\b502\b|\b503\b|\b504\b|BadGateway|ServiceUnavailable|GatewayTimeout|EADDRINUSE|socket hang up/i },
+  // Permission / auth (word-boundary on status codes)
+  { category: "permission", regex: /EACCES|EPERM|permission denied|forbidden|\b401\b|\b403\b|AccessViolationException|Unauthorized|access denied/i },
+  // File not found (word-boundary on 404)
+  { category: "not_found",  regex: /ENOENT|FileNotFoundError|no such file|\b404\b|not found|does not exist|FileNotFoundException/i },
   // IO / filesystem
   { category: "io",         regex: /IOError|OSError|ENOSPC|EMFILE|EBADF|EISDIR|ENOTEMPTY|EEXIST|BrokenPipeError|disk full|no space left|too many open files/i },
   // Memory
   { category: "memory",     regex: /out of memory|OOM|heap|segfault|SIGSEGV|SIGABRT|SIGBUS|core dump|stack overflow|bus error|MemoryError|OutOfMemoryError|ENOMEM/i },
   // Build / link / compile
   { category: "build",      regex: /compilation failed|build error|linker error|undefined reference|collect2: error|ld:|make\[|make:|cmake error|msbuild|xcodebuild|clang:|gcc:|g\+\+:|rustc|cargo error|swiftc|could not compile/i },
-  // Borrow checker / Rust
-  { category: "borrow",     regex: /borrow checker|lifetime|cannot borrow|move occurs|does not implement.*trait|borrowing/i },
   // Config / env
   { category: "config",     regex: /missing.*config|env.*not set|invalid.*option|\.env|config.*not found/i },
   // Dependency / package
-  { category: "dependency", regex: /version conflict|peer dep|incompatible|requires.*version|npm ERR|yarn error|pnpm ERR|pip.*error|gem.*error|bundler|composer|nuget|EINTEGRITY/i },
+  { category: "dependency", regex: /version conflict|peer dep|incompatible|requires.*version|npm ERR|yarn error|pnpm ERR|pip.*error|gem.*error|bundler|composer|nuget|EINTEGRITY|could not find a version|no matching distribution/i },
   // Concurrency
   { category: "concurrency", regex: /deadlock|race condition|concurrent map|ConcurrentModificationException|data race|thread.*panic/i },
   // HTTP status
