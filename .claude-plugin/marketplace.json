@@ -1,8 +1,7 @@
 {
   "name": "claude-err-marketplace",
   "owner": {
-    "name": "Mani",
-    "url": "https://github.com/manimohans"
+    "name": "Mani"
   },
   "plugins": [
     {
