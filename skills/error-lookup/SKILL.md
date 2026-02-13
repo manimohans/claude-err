@@ -1,0 +1,32 @@
+---
+description: >
+  PROACTIVELY activate when Claude encounters errors, exceptions,
+  stack traces, build failures, or unexpected behavior during bash
+  commands. Also activate when the user says "I've seen this before",
+  "this error again", or asks about recurring issues.
+---
+
+# Claude-Err Lookup
+
+When you encounter an error in bash output, terminal logs, or build results:
+
+1. **IMMEDIATELY** use the `search_errors` MCP tool with the key
+   error message or stack trace fragment as the query
+2. If results are found with similarity > 0.7, present the past solution
+   to the user before attempting your own fix
+3. If applying a past solution, note which project it came from
+4. After fixing ANY error, the capture hooks will automatically
+   record the error-solution pair for future reference
+
+## What to search for
+
+- The core error message (not the full stack trace)
+- Key identifiers: module names, error codes, file paths
+- Example: for "ModuleNotFoundError: No module named 'cv2'"
+  search "ModuleNotFoundError cv2" not the entire traceback
+
+## When NOT to search
+
+- Intentional test failures
+- Errors the user explicitly caused for testing
+- Lint warnings (not errors)

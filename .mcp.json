@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "claude-err": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/mcp-server.js"],
+      "env": {
+        "DB_PATH": "${HOME}/.claude-err/claude-err.db"
+      }
+    }
+  }
+}

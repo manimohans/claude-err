@@ -1,0 +1,8 @@
+{
+  "name": "claude-err",
+  "version": "0.1.0",
+  "description": "Cross-project error intelligence. Captures error-solution pairs across all projects and surfaces relevant past solutions automatically.",
+  "author": {
+    "name": "Mani"
+  }
+}
