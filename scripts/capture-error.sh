@@ -29,7 +29,7 @@ else
 fi
 
 # Error detected — store it
-DB_PATH="${HOME}/.claude-err/claude-err.db"
+DB_PATH="${DB_PATH:-${HOME}/.claude-err/claude-err.db}"
 mkdir -p "$(dirname "$DB_PATH")"
 
 # Extract project name from cwd
