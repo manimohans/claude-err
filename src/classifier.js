@@ -12,7 +12,7 @@ const PATTERNS = [
   // Index / bounds
   { category: "bounds",     regex: /IndexError|ArrayIndexOutOfBoundsException|index out of range|slice bounds out of range|BoundsError|RangeError|OutOfRangeException|subscript out of range/i },
   // Name / reference
-  { category: "name",       regex: /NameError|ReferenceError|not defined|not declared|undeclared|not in scope|Variable not in scope|undefined reference|undefined symbol|unresolved external|TS[0-9]{4}/i },
+  { category: "name",       regex: /NameError|ReferenceError|not defined|not declared|undeclared|not in scope|Variable not in scope|undefined reference|undefined symbol|unresolved external/i },
   // Key / lookup
   { category: "key",        regex: /KeyError|key not found|no such key|missing key|NoSuchElementException|BadMapError/i },
   // Attribute / method
