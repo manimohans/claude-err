@@ -39,6 +39,10 @@ PROJECT_NAME=$(basename "$PROJECT_DIR")
 # Truncate response to first 2000 characters (bash substring is UTF-8 safe)
 ERROR_TEXT="${TOOL_RESPONSE:0:2000}"
 
+# Ensure Node.js dependencies are installed (may not be ready if SessionStart
+# hook hasn't completed yet or failed)
+bash "${CLAUDE_PLUGIN_ROOT}/scripts/ensure-deps.sh"
+
 # Write to SQLite via the Node.js helper (JSON over stdin avoids shell injection)
 jq -nc \
   --arg type "error" \

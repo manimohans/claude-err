@@ -27,7 +27,7 @@ claude-err hooks into Claude Code's lifecycle events and runs in the background:
 
 2. **Solution capture** (`Stop` hook) — When a session ends, claude-err checks if there were unresolved errors. If so, it reads the session transcript, extracts the fix actions (file edits, commands run after the error), and stores them linked to the original error.
 
-3. **Recall** (skill + session context) — On session start, error/solution counts are injected into context. When Claude encounters an error, the `error-lookup` skill searches the database for matching past errors and surfaces their solutions.
+3. **Recall** (skill + session context) — On session start, error/solution counts are injected into context. When Claude encounters an error, the `error-lookup` skill uses the FTS5 full-text search index to find matching past errors and surfaces their solutions.
 
 All data stays in `~/.claude-err/claude-err.db`. Nothing leaves your machine.
 
@@ -76,6 +76,7 @@ Single SQLite file. Two tables: `errors` (with FTS index) and `solutions`. Delet
 - [Claude Code](https://code.claude.com) with plugin support
 - Node.js 18+
 - `jq` (pre-installed on macOS; `sudo apt install jq` on Linux)
+- `sqlite3` (pre-installed on macOS; `sudo apt install sqlite3` on Linux) — used by search commands and session context injection
 
 ## License
 
